@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">Mis notas</string>
+    <string name="action_add">Agregar</string>
+    <string name="action_edit">Editar</string>
+    <string name="action_delete">Eliminar</string>
+    <string name="err_listado_vacio">No hay notas :(</string>
+    <string name="title_activity_editor_notas">Nota</string>
+    <string name="et_editor_titulo_prompt">Titulo :</string>
+    <string name="et_editor_detalle_prompt">Detalle :</string>
+    <string name="et_editor_detalle_hint">Ingresar detalle</string>
+    <string name="btn_editor_guardar">Guardar</string>
+    <string name="msg_detalle_nota" translatable="false">
+        <![CDATA[
+            <h2>%s</h2><br><h4>Tipo: %s</h4><br><p>%s</p>
+        ]]>
+    </string>
+    <string name="err_edicion_faltantes">Debe ingresar todos los campos.</string>
+    <string name="msg_registro_exitoso">Nota creada</string>
+    <string name="msg_edicion_exitosa">Nota actualizada</string>
+    <string name="err_edicion_nota">Error al guardar la nota.</string>
+    <string-array name="spn_editor_tipos">
+        <item>Seleccionar</item>
+        <item>Alerta</item>
+        <item>Informativa</item>
+        <item>Advertencia</item>
+    </string-array>
+</resources>
