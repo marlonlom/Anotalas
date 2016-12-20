@@ -23,6 +23,9 @@
     <string name="title_edicion_nota_borrado_confirm">Eliminar nota?</string>
     <string name="text_yes">Si</string>
     <string name="text_no">No</string>
+    <string name="spn_editor_tipo_prompt">Tipo nota</string>
+    <string name="msg_borrado_exitoso">Nota eliminada</string>
+    <string name="err_borrado_nota">No se pudo borrar la nota</string>
     <string-array name="spn_editor_tipos">
         <item>Seleccionar</item>
         <item>Alerta</item>

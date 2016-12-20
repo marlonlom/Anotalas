@@ -48,7 +48,7 @@ public final class NotasSQLiteHelper extends SQLiteOpenHelper implements NotasRe
             valores.put("tipo", nota.getTipo());
             valores.put("descripcion", nota.getDescripcion());
             if (!crearNuevo) {
-                db.update("Usuarios", valores, "codigo=".concat(String.valueOf(nota.getId())), null);
+                db.update("Notas", valores, "codigo=".concat(String.valueOf(nota.getId())), null);
             } else {
                 db.insert("Notas", null, valores);
             }
@@ -80,7 +80,7 @@ public final class NotasSQLiteHelper extends SQLiteOpenHelper implements NotasRe
         final Cursor cursor = db.rawQuery("SELECT codigo, titulo, tipo, descripcion FROM Notas LIMIT 50", null);
         if (cursor != null && cursor.getCount() > 0) {
             cursor.moveToFirst();
-            while (cursor.isAfterLast()) {
+            while (!cursor.isAfterLast()) {
                 final Nota item = new Nota();
                 item.setId(cursor.getLong(0));
                 item.setTitulo(cursor.getString(1));

@@ -50,6 +50,17 @@ final class EdicionNotas {
          * @param crearNuevo true/false
          */
         void mostrarMensajeError(boolean crearNuevo);
+
+        /**
+         * Mostrar exito eliminacion de la nota, permitiendo
+         * volver al listado de notas.
+         */
+        void mostrarExitoEliminacion();
+
+        /**
+         * Mostrar error eliminacion de la nota.
+         */
+        void mostrarErrorEliminacion();
     }
 
     /**
@@ -103,6 +114,11 @@ final class EdicionNotas {
          */
         void eliminarNota(Long idNota) {
             boolean notaEliminada = mModel.eliminarNota(idNota);
+            if (notaEliminada) {
+                mView.mostrarExitoEliminacion();
+            } else {
+                mView.mostrarErrorEliminacion();
+            }
         }
     }
 }

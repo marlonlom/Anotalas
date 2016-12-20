@@ -1,7 +1,9 @@
 package com.example.demo.anotalas.ui.edicion;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AlertDialog;
@@ -11,14 +13,18 @@ import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.example.demo.anotalas.R;
 import com.example.demo.anotalas.model.items.Nota;
 import com.example.demo.anotalas.ui.Constantes;
+import com.example.demo.anotalas.ui.listas.ListadoNotasActivity;
+import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
+
+import java.util.Arrays;
 
 /**
  * Clase tipo activity que permite realizar operaciones de consulta,
@@ -50,6 +56,7 @@ public class EdicionNotasActivity extends AppCompatActivity implements EdicionNo
         setContentView(R.layout.activity_editor);
         mPresenter = new EdicionNotas.Presenter(this, this);
         prepararToolbar();
+        prepararSpinnerTipoNota();
         prepararDatosObtenidos();
         prepararBotonEdicion();
     }
@@ -97,9 +104,9 @@ public class EdicionNotasActivity extends AppCompatActivity implements EdicionNo
                 findViewById(R.id.content_editor_notas).setVisibility(View.VISIBLE);
                 findViewById(R.id.content_detalle_notas).setVisibility(View.GONE);
 
-                ((EditText) findViewById(R.id.et_editor_titulo)).setText("");
-                ((Spinner) findViewById(R.id.spn_editor_tipo)).setSelection(Constantes.CERO);
-                ((TextInputEditText) findViewById(R.id.tiet_editor_detalle)).setText("");
+                ((EditText) findViewById(R.id.et_editor_titulo)).setText(Constantes.TEXTO_VACIO);
+                ((MaterialBetterSpinner) findViewById(R.id.spn_editor_tipo)).setSelection(Constantes.CERO);
+                ((TextInputEditText) findViewById(R.id.tiet_editor_detalle)).setText(Constantes.TEXTO_VACIO);
                 break;
             case Constantes.RESULT_DETALLE:
                 findViewById(R.id.content_editor_notas).setVisibility(View.GONE);
@@ -112,6 +119,15 @@ public class EdicionNotasActivity extends AppCompatActivity implements EdicionNo
                 ((TextView) findViewById(R.id.tv_detalle_nota)).setText(Html.fromHtml(htmlText));
                 break;
         }
+    }
+
+    /**
+     * Preparar listado tipos nota.
+     */
+    private void prepararSpinnerTipoNota() {
+        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, Arrays.asList(obtenerTiposNota()));
+        ((MaterialBetterSpinner) findViewById(R.id.spn_editor_tipo)).setAdapter(arrayAdapter);
     }
 
     /**
@@ -182,7 +198,7 @@ public class EdicionNotasActivity extends AppCompatActivity implements EdicionNo
 
         final Nota nota = mPresenter.encontrarNota(mIdNota);
         ((EditText) findViewById(R.id.et_editor_titulo)).setText(nota.getTitulo());
-        ((Spinner) findViewById(R.id.spn_editor_tipo)).setSelection(obtenerPosicionTipoNota(nota.getTipo()));
+        ((MaterialBetterSpinner) findViewById(R.id.spn_editor_tipo)).setText(nota.getTipo());
         ((TextInputEditText) findViewById(R.id.tiet_editor_detalle)).setText(nota.getDescripcion());
         mAccion = Constantes.RESULT_EDITAR;
     }
@@ -211,7 +227,7 @@ public class EdicionNotasActivity extends AppCompatActivity implements EdicionNo
     @Override
     public void prepararGuardadoNota() {
         final String titulo = ((EditText) findViewById(R.id.et_editor_titulo)).getText().toString();
-        final String tipo = (String) ((Spinner) findViewById(R.id.spn_editor_tipo)).getSelectedItem();
+        final String tipo = (String) ((MaterialBetterSpinner) findViewById(R.id.spn_editor_tipo)).getText().toString();
         final String detalle = ((TextInputEditText) findViewById(R.id.tiet_editor_detalle)).getText().toString();
 
         boolean tituloIngresado = titulo != null && !titulo.isEmpty();
@@ -237,11 +253,38 @@ public class EdicionNotasActivity extends AppCompatActivity implements EdicionNo
     @Override
     public void mostrarMensajeExito(boolean crearNuevo) {
         int resId = crearNuevo ? R.string.msg_registro_exitoso : R.string.msg_edicion_exitosa;
-        Snackbar.make(findViewById(R.id.editor_content), resId, Snackbar.LENGTH_SHORT).show();
+        Snackbar.make(findViewById(R.id.editor_content), resId, Snackbar.LENGTH_LONG).show();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Intent intent = new Intent(EdicionNotasActivity.this, ListadoNotasActivity.class);
+                startActivity(intent);
+            }
+        }, 500);
     }
 
     @Override
     public void mostrarMensajeError(boolean crearNuevo) {
-        Snackbar.make(findViewById(R.id.editor_content), R.string.err_edicion_nota, Snackbar.LENGTH_SHORT).show();
+        Snackbar.make(findViewById(R.id.editor_content),
+                R.string.err_edicion_nota, Snackbar.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void mostrarExitoEliminacion() {
+        Snackbar.make(findViewById(R.id.editor_content),
+                R.string.msg_borrado_exitoso, Snackbar.LENGTH_LONG).show();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Intent intent = new Intent(EdicionNotasActivity.this, ListadoNotasActivity.class);
+                startActivity(intent);
+            }
+        }, 500);
+    }
+
+    @Override
+    public void mostrarErrorEliminacion() {
+        Snackbar.make(findViewById(R.id.editor_content),
+                R.string.err_borrado_nota, Snackbar.LENGTH_SHORT).show();
     }
 }

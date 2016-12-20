@@ -2,7 +2,6 @@ package com.example.demo.anotalas.ui.listas;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,6 +13,7 @@ import android.view.View;
 
 import com.example.demo.anotalas.R;
 import com.example.demo.anotalas.model.items.Nota;
+import com.example.demo.anotalas.ui.Constantes;
 import com.example.demo.anotalas.ui.edicion.EdicionNotasActivity;
 
 import java.util.List;
@@ -65,9 +65,12 @@ public final class ListadoNotasActivity extends AppCompatActivity implements Lis
                 new ListadoNotasOnItemTouch.OnItemClickListener() {
                     @Override
                     public void onItemClick(View view, int position) {
-                        Nota nota = ((ListadoNotasAdapter) mListaNotas.getAdapter()).getNotas().get(position);
-                        Snackbar.make(findViewById(R.id.main_content),
-                                "Clicked : " + nota.getTitulo(), Snackbar.LENGTH_SHORT).show();
+                        final Nota nota = ((ListadoNotasAdapter) mListaNotas.getAdapter())
+                                .getNotas().get(position);
+                        Intent intent = new Intent(ListadoNotasActivity.this, EdicionNotasActivity.class);
+                        intent.putExtra(Constantes.PARAM_ACTION, Constantes.RESULT_DETALLE);
+                        intent.putExtra(Constantes.PARAM_NOTA_ID, nota.getId());
+                        startActivity(intent);
                     }
                 }));
         findViewById(R.id.tv_listado_vacio).setVisibility(View.GONE);
