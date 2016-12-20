@@ -1,9 +1,10 @@
 package com.example.demo.anotalas.ui.edicion;
 
-import android.content.Intent;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
@@ -27,8 +28,20 @@ import com.example.demo.anotalas.ui.Constantes;
  */
 public class EdicionNotasActivity extends AppCompatActivity implements EdicionNotas.View {
 
+    /**
+     * Componente tipo presentador, el cual controla las acciones
+     * y eventos relacionados con el detalle de una notas.
+     */
     private EdicionNotas.Presenter mPresenter;
+
+    /**
+     * Referencia a la accion a realizar para una nota seleccionada.
+     */
     private int mAccion;
+
+    /**
+     * Referencia al codigo de una nota seleccionda para ver el detalle.
+     */
     private long mIdNota;
 
     @Override
@@ -46,8 +59,8 @@ public class EdicionNotasActivity extends AppCompatActivity implements EdicionNo
         getMenuInflater().inflate(R.menu.menu_edicion, menu);
         supportInvalidateOptionsMenu();
         Bundle extra = getBundleExtras();
-        final int accion = extra != null ? extra.getInt(Constantes.PARAM_ACTION) : -1;
-        final boolean modoLectura = accion > -1 && accion == Constantes.RESULT_DETALLE;
+        final int accion = extra != null ? extra.getInt(Constantes.PARAM_ACTION) : Constantes.UNO_NEGATIVO;
+        final boolean modoLectura = accion > Constantes.UNO_NEGATIVO && accion == Constantes.RESULT_DETALLE;
         menu.findItem(R.id.action_edit).setVisible(modoLectura);
         menu.findItem(R.id.action_delete).setVisible(modoLectura);
         return true;
@@ -58,9 +71,10 @@ public class EdicionNotasActivity extends AppCompatActivity implements EdicionNo
         int id = item.getItemId();
         switch (id) {
             case R.id.action_edit:
-                this.habilitarEdicion();
+                habilitarEdicion();
                 break;
             case R.id.action_delete:
+                mostrarConfirmacionBorradoNota();
                 break;
             default:
                 return super.onOptionsItemSelected(item);
@@ -84,7 +98,7 @@ public class EdicionNotasActivity extends AppCompatActivity implements EdicionNo
                 findViewById(R.id.content_detalle_notas).setVisibility(View.GONE);
 
                 ((EditText) findViewById(R.id.et_editor_titulo)).setText("");
-                ((Spinner) findViewById(R.id.spn_editor_tipo)).setSelection(0);
+                ((Spinner) findViewById(R.id.spn_editor_tipo)).setSelection(Constantes.CERO);
                 ((TextInputEditText) findViewById(R.id.tiet_editor_detalle)).setText("");
                 break;
             case Constantes.RESULT_DETALLE:
@@ -117,13 +131,13 @@ public class EdicionNotasActivity extends AppCompatActivity implements EdicionNo
      */
     private int obtenerPosicionTipoNota(String tipoNota) {
         final String[] tipos = obtenerTiposNota();
-        for (int pos = 0; pos < tipos.length; pos++) {
+        for (int pos = Constantes.CERO; pos < tipos.length; pos++) {
             final String item = tipos[pos];
             if (item.equalsIgnoreCase(tipoNota)) {
                 return pos;
             }
         }
-        return 0;
+        return Constantes.UNO_NEGATIVO;
     }
 
     /**
@@ -132,8 +146,7 @@ public class EdicionNotasActivity extends AppCompatActivity implements EdicionNo
      * @return datos encontrados
      */
     private Bundle getBundleExtras() {
-        Intent intent = getIntent();
-        return intent.getExtras();
+        return getIntent().getExtras();
     }
 
     /**
@@ -175,12 +188,36 @@ public class EdicionNotasActivity extends AppCompatActivity implements EdicionNo
     }
 
     @Override
+    public void mostrarConfirmacionBorradoNota() {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.title_edicion_nota_borrado_confirm)
+                .setMessage(R.string.msg_edicion_nota_borrado_confirm_body)
+                .setPositiveButton(R.string.text_yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (mIdNota > Constantes.CERO) {
+                            mPresenter.eliminarNota(mIdNota);
+                        }
+                        dialog.dismiss();
+                    }
+                }).setNegativeButton(R.string.text_no, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        }).create().show();
+    }
+
+    @Override
     public void prepararGuardadoNota() {
         final String titulo = ((EditText) findViewById(R.id.et_editor_titulo)).getText().toString();
         final String tipo = (String) ((Spinner) findViewById(R.id.spn_editor_tipo)).getSelectedItem();
         final String detalle = ((TextInputEditText) findViewById(R.id.tiet_editor_detalle)).getText().toString();
 
-        boolean datosCompletos = !titulo.isEmpty() && !tipo.isEmpty() && !detalle.isEmpty();
+        boolean tituloIngresado = titulo != null && !titulo.isEmpty();
+        boolean tipoIngresado = tipo != null && !tipo.isEmpty();
+        boolean descripcionIngresado = detalle != null && !detalle.isEmpty();
+        boolean datosCompletos = tituloIngresado && tipoIngresado && descripcionIngresado;
 
         if (datosCompletos) {
             final Nota notaGuardar = new Nota();
@@ -207,5 +244,4 @@ public class EdicionNotasActivity extends AppCompatActivity implements EdicionNo
     public void mostrarMensajeError(boolean crearNuevo) {
         Snackbar.make(findViewById(R.id.editor_content), R.string.err_edicion_nota, Snackbar.LENGTH_SHORT).show();
     }
-
 }

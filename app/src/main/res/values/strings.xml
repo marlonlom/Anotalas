@@ -18,6 +18,11 @@
     <string name="msg_registro_exitoso">Nota creada</string>
     <string name="msg_edicion_exitosa">Nota actualizada</string>
     <string name="err_edicion_nota">Error al guardar la nota.</string>
+    <string name="tv_listado_item_titulo">Titulo de la nota</string>
+    <string name="msg_edicion_nota_borrado_confirm_body">¿Desea eliminar la nota?</string>
+    <string name="title_edicion_nota_borrado_confirm">Eliminar nota?</string>
+    <string name="text_yes">Si</string>
+    <string name="text_no">No</string>
     <string-array name="spn_editor_tipos">
         <item>Seleccionar</item>
         <item>Alerta</item>

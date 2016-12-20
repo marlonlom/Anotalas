@@ -26,7 +26,13 @@ final class EdicionNotas {
         void habilitarEdicion();
 
         /**
-         * Premite realizar las validaciones previas al guardado de una nota,
+         * Permite mostrar la ventana de confirmacion de borrado de
+         * una nota seleccionada.
+         */
+        void mostrarConfirmacionBorradoNota();
+
+        /**
+         * Permite realizar las validaciones previas al guardado de una nota,
          * bien sea de registro nuevo o de edicion.
          */
         void prepararGuardadoNota();
@@ -75,6 +81,12 @@ final class EdicionNotas {
             return mModel.encontrarPorId(idNota);
         }
 
+        /**
+         * Realiza la insercion o la actualizacion de una nota.
+         *
+         * @param notaGuardar nota a crear/actualizar
+         * @param crearNuevo  true/false si la accion es crear nueva nota
+         */
         void aplicarGuardadoNota(Nota notaGuardar, boolean crearNuevo) {
             boolean guardado = mModel.guardarNota(notaGuardar, crearNuevo);
             if (guardado) {
@@ -82,6 +94,15 @@ final class EdicionNotas {
             } else {
                 mView.mostrarMensajeError(crearNuevo);
             }
+        }
+
+        /**
+         * Realiza el borrado de una nota seleccionada.
+         *
+         * @param idNota codigo nota
+         */
+        void eliminarNota(Long idNota) {
+            boolean notaEliminada = mModel.eliminarNota(idNota);
         }
     }
 }

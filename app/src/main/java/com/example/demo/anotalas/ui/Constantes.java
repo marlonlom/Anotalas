@@ -12,4 +12,6 @@ public final class Constantes {
     public static final int RESULT_CREAR = 301;
     public static final int RESULT_DETALLE = 302;
     public static final int RESULT_EDITAR = 303;
+    public static final int CERO = 0;
+    public static final int UNO_NEGATIVO = -1;
 }

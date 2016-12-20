@@ -22,10 +22,21 @@ final class ListadoNotas {
      * @author demo
      */
     interface View {
+        /**
+         * Permite mostrar la vista de creacion de notas.
+         */
         void mostrarVistaCreacionNotas();
 
-        void mostrarListadoNotas();
+        /**
+         * Permite mostrar la lista de notas.
+         *
+         * @param notas listado notas.
+         */
+        void mostrarListadoNotas(List<Nota> notas);
 
+        /**
+         * Permite mostrar un error en la pantalla.
+         */
         void mostrarErrorListado();
     }
 
@@ -39,20 +50,21 @@ final class ListadoNotas {
 
         private final NotasSQLiteHelper mModel;
         private final View mView;
-        private final Context mContext;
 
         Presenter(ListadoNotas.View view, Context context) {
             mView = view;
-            mContext = context;
-            mModel = new NotasSQLiteHelper(mContext);
+            mModel = new NotasSQLiteHelper(context);
         }
 
+        /**
+         * Permite consultar la lista de notas.
+         */
         void obtenerListadoNotas() {
             final List<Nota> notas = mModel.listarTodos();
             if (notas == null || notas.isEmpty()) {
                 mView.mostrarErrorListado();
             } else {
-                mView.mostrarListadoNotas();
+                mView.mostrarListadoNotas(notas);
             }
         }
     }
